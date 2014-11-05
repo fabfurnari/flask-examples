@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Simple login</title>
+  </head>
+  <body>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <ul class="flashes">
+      {% for message in messages %}
+      <li><strong>{{ message }}</strong></li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+    <p>
+      A simple index page
+    </p>
+    <p>
+      Here a demonstration of some Jinja features:
+    </p>
+    <p>
+      {% if session.user %}
+      Your user is: {{ session.user }}<br />
+      Now you can go to the <a href="{{ url_for('secret_page') }}">Secret Page</a>!
+      Got to <a href="{{ url_for('logout') }}">the logout page</a>
+      {% else %}
+      You are not logged in!<br />
+      Go to <a href="{{ url_for('login') }}">the login page</a>
+      And not try to go to the <a href="{{ url_for('secret_page') }}">Secret Page</a>!
+      {% endif %}
+    </p>
+  </body>
+</html>
+
+
+
+

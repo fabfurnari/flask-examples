@@ -9,4 +9,5 @@ Examples
 
    * simple-flask - very very minimal flask application
    * endpoint-routing - very simple routing with @app.route()
-   * simple-db
+   * simple-login - some applications showing how to use basic login features
+                    without external modules (just flask.session object)
