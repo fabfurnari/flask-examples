@@ -1,15 +1,15 @@
 from flask import Flask
+from flask import flash, g, render_template, redirect, url_for, request
+import sqlite3
 
 app = Flask(__name__)
 
 # Simple configuration
 # Load default config and override config from an environment variable
 app.config.update(dict(
-    DATABASE='/test.db',
+    DATABASE='./test.db',
     DEBUG=True,
-    SECRET_KEY='413a7e6759233f7',
-    USERNAME='admin',
-    PASSWORD='default'
+    SECRET_KEY='213ba2123123',
 ))
 app.config.from_envvar('FLASKR_SETTINGS', silent=True)
 
@@ -49,42 +49,66 @@ def close_db(error):
 # END DB MANAGEMENT
 ######
 
-######
-# LOGIN MANAGEMENT
-######
+@app.route('/')
+def index():
+    '''
+    Simply render the index page querying the db
+    and passing all values to the template.
+    '''
+    db = get_db()
+    cur = db.execute('select id, colore, citta from entries order by id')
+    entries = cur.fetchall()
+    return render_template('index.html', entries=entries)
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    error = None
+@app.route('/index2')
+def index2():
+    '''
+    Another index page with inline add form
+    The backend is identical, only change is in the template
+    '''
+    db = get_db()
+    cur = db.execute('select id, colore, citta from entries order by id')
+    entries = cur.fetchall()
+    return render_template('index2.html', entries=entries)
+
+@app.route('/add', methods=['GET', 'POST'])
+def add_entry():
+    '''
+    In this case the page renders the form and receives the
+    data assuming is called in GET or POST (see simple-login)
+    '''
+    print 'DEBUGGGG:' + request.data
     if request.method == 'POST':
-        if request.form['username'] != app.config['USERNAME']:
-            error = 'Invalid username'
-        elif request.form['password'] != app.config['PASSWORD']:
-            error = 'Invalid password'
+        colore = request.form['colore']
+        citta = request.form['citta']
+        print request.data
+        if not colore or not citta:
+            flash('You must fill all data!')
+            return redirect(url_for('index'))
+        # this can easily be splitted into a separate
+        # function
+        db = get_db()
+        cur = db.execute('INSERT INTO entries (colore, citta) VALUES (?,?)', \
+                         [colore, citta])
+        db.commit()
+        response = cur.lastrowid
+        if response:
+            # all is fine
+            flash('All entries (%s) inserted!' % response)
         else:
-            session['logged_in'] = True
-            session['username'] = request.form['username']
-            flash('You were logged in')
-            return redirect(url_for('show_entries'))
-    return render_template('login.html', error=error)
+            flash('Something gone wrong!')
+        return redirect(url_for('index'))
+    elif request.method == 'GET':
+        return render_template('add-entry.html')
 
-@app.route('/logout')
-def logout():
-    if 'username' in session:
-        del session['username']
-        del session['logged_in']
-    return render_template('login.html')
+@app.route('/reset')
+def reset():
+    '''
+    Just an example function to show how to reinitialize the db
+    '''
+    init_db()
+    flash('Database reset!')
+    return redirect(url_for('index'))
 
-#For endpoints requiring login and password via web:
-def auth(fn):
-    @functools.wraps(fn)
-    def _verify_admin(*args, **kwdargs):
-        print session
-        if 'username' not in session:
-            return redirect('/login')
-        return fn(*args, **kwdargs)
-    return _verify_admin
-
-######
-# END LOGIN MANAGEMENT
-######
+if __name__ == '__main__':
+    app.run()

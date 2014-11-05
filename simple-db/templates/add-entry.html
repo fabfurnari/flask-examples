@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Simple DB</title>
+  </head>
+  <body>
+    <p>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <ul class="flashes">
+      {% for message in messages %}
+      <li><strong>{{ message }}</strong></li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+    </p>
+    <p>
+      Add an entry
+    </p>
+    <form action="{{ url_for('add_entry') }}" method="post">
+      Colore: <input type="text" name="colore">
+      Citta': <input type="text" name="citta"><br />
+      <input type="submit" value="submit" />
+    </form>
+    <p>
+      <a href="{{ url_for('index') }}">Return to index</a>
+    </p>
+  </body>
+</html>
+
