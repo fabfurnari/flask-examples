@@ -64,7 +64,7 @@ def index():
 def index2():
     '''
     Another index page with inline add form
-    The backend is identical, only change is in the template
+    The backend is identical, only changes are in template
     '''
     db = get_db()
     cur = db.execute('select id, colore, citta from entries order by id')
@@ -75,13 +75,11 @@ def index2():
 def add_entry():
     '''
     In this case the page renders the form and receives the
-    data assuming is called in GET or POST (see simple-login)
+    data assuming is called in GET or POST (see also simple-login)
     '''
-    print 'DEBUGGGG:' + request.data
     if request.method == 'POST':
         colore = request.form['colore']
         citta = request.form['citta']
-        print request.data
         if not colore or not citta:
             flash('You must fill all data!')
             return redirect(url_for('index'))
@@ -101,6 +99,14 @@ def add_entry():
     elif request.method == 'GET':
         return render_template('add-entry.html')
 
+@app.route('/update/<int:id>')
+def update_entry():
+    pass
+
+@app.route('/delete/<int:id>')
+def delete_entry():
+    pass
+    
 @app.route('/reset')
 def reset():
     '''
