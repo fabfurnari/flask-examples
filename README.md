@@ -11,4 +11,6 @@ Examples
    * endpoint-routing - very simple routing with @app.route()
    * simple-login - some applications showing how to use basic login features
                     without external modules (just flask.session object)
-   * simple-db - implements simple CRUD operation on sqlite3 db without using ORM                 
+   * db-examples/simple-db - implements simple CRUD operation on sqlite3 db without using ORM
+   * db-examples/simple-sqlalchemy - basic usage for Flask-SQLAlchemy   
+   *
