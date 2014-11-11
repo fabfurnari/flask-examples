@@ -17,16 +17,23 @@
     {% endwith %}
     </p>
     <p>
-      Another simple index page with inline form to add data.<br />
+      Another simple index page with inline form to add/update/remove entries.<br />
       Just to demonstrate that the endpoint called can be on any page, not
       necessary the same...
     </p>
-    <table>
+    <table border=1>
+    <tr>
+      <th>ID</th>
+      <th>COLORE</th>
+      <th>CITTA</th>
+      <th>CANCELLA</th>
+    </tr>
     {% for entry in entries %}
     <tr>
       <td>{{ entry.id }}</td>
       <td>{{ entry.colore }}</td>
       <td>{{ entry.citta }}</td>
+      <td><a href={{ url_for('delete_entry', id=entry.id) }}>Delete this entry</a></td>
     </tr>
     {% endfor %}
     </table>
@@ -41,13 +48,6 @@
     <p>
       <a href="{{ url_for('reset') }}">Reset</a> the database (warning!)
     </p>
-
-
   </body>
 </html>
-
-
-
-
-
 

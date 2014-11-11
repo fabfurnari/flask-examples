@@ -39,6 +39,19 @@ def get_db():
         g.sqlite_db = connect_db()
     return g.sqlite_db
 
+def insert_into_db(colore=None, citta=None):
+    db = get_db()
+    cur = db.execute('INSERT INTO entries (colore, citta) VALUES (?,?)', \
+        [colore, citta])
+    db.commit()
+    return cur.lastrowid
+
+def delete_from_db(id=None):
+    db = get_db()
+    cur = db.execute('DELETE FROM entries where id = ?', [id])
+    db.commit()
+    return cur
+
 @app.teardown_appcontext
 def close_db(error):
     """Closes the database again at the end of the request."""
@@ -52,30 +65,18 @@ def close_db(error):
 @app.route('/')
 def index():
     '''
-    Simply render the index page querying the db
-    and passing all values to the template.
-    '''
-    db = get_db()
-    cur = db.execute('select id, colore, citta from entries order by id')
-    entries = cur.fetchall()
-    return render_template('index.html', entries=entries)
-
-@app.route('/index2')
-def index2():
-    '''
     Another index page with inline add form
     The backend is identical, only changes are in template
     '''
     db = get_db()
     cur = db.execute('select id, colore, citta from entries order by id')
     entries = cur.fetchall()
-    return render_template('index2.html', entries=entries)
+    return render_template('better-index.html', entries=entries)
 
-@app.route('/add', methods=['GET', 'POST'])
+@app.route('/add', methods=['POST'])
 def add_entry():
     '''
-    In this case the page renders the form and receives the
-    data assuming is called in GET or POST (see also simple-login)
+    This endpoint accepts only POST request to add data
     '''
     if request.method == 'POST':
         colore = request.form['colore']
@@ -83,29 +84,30 @@ def add_entry():
         if not colore or not citta:
             flash('You must fill all data!')
             return redirect(url_for('index'))
-        # this can easily be splitted into a separate
-        # function
-        db = get_db()
-        cur = db.execute('INSERT INTO entries (colore, citta) VALUES (?,?)', \
-                         [colore, citta])
-        db.commit()
-        response = cur.lastrowid
+        response = insert_into_db(colore=colore, citta=citta)
         if response:
             # all is fine
             flash('All entries (%s) inserted!' % response)
         else:
             flash('Something gone wrong!')
         return redirect(url_for('index'))
-    elif request.method == 'GET':
-        return render_template('add-entry.html')
 
 @app.route('/update/<int:id>')
-def update_entry():
+def update_entry(id=None):
     pass
 
 @app.route('/delete/<int:id>')
-def delete_entry():
-    pass
+def delete_entry(id=None):
+    '''
+    Example function on how to delete an entry
+    A better control over id (or authentication, perhaps)
+    should be done, but this is only a trivial example...
+    '''
+    response = delete_from_db(id)
+    print response # debug
+    if response:
+        flash('Entry removed successfully!')
+    return redirect(url_for('index'))
     
 @app.route('/reset')
 def reset():
