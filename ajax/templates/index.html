@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Ajax example</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-2.2.2.min.js"></script>
+  </head>
+
+  <body>
+    <div class="container">
+      <form class="form-signin" action="/_test function" method="post" role="form">
+        <h2 class="form-signin-heading">Please Sign Up </h2>
+        <input type="email" name="username" class="form-control" placeholder="Email address" required autofocus>
+        <input type="password" name="password" class="form-control" placeholder="Password" required>
+
+        <button class="btn btn-lg btn-primary btn-block" type="button">Register </button>
+      </form>
+      <div id="hiddendiv" style="display: none" class="container">
+        <p></p>
+        <div id="responsediv" class="container">
+        </div>
+      </div>
+
+    </div>
+
+    <script>
+      $(function() {
+      $('button').click(function() {
+      var user = $('#txtUsername').val();
+      var pass = $('#txtPassword').val();
+      $.ajax({
+      url: '/_test_function',
+      data: $('form').serialize(),
+      type: 'POST',
+      success: function(response) {
+      var text = JSON.parse(response);
+      $("#hiddendiv").slideToggle("fast");
+      $("#responsediv").append("<span class='badge'>USER: "+text["user"]+"</span>");
+      $("#responsediv").append("<span class='badge'>PASS: "+text["password"]+"</span>");
+      
+      },
+      error: function(error) {
+      console.log(error);
+      }
+      });
+      });
+      });
+    </script>
+  </body>
+
+</html>
