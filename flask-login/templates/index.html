@@ -1,0 +1,6 @@
+{% if current_user.is_authenticated %}
+<p>Welcome</p>
+{% else %}
+<p>You are not authenticated, go to <a href="{{ url_for('login') }}">login page</a></p>
+{% endif %}
+                                       
