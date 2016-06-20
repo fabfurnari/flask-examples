@@ -13,4 +13,4 @@ Examples
                     without external modules (just flask.session object)
    * db-examples/simple-db - implements simple CRUD operation on sqlite3 db without using ORM
    * db-examples/simple-sqlalchemy - basic usage for Flask-SQLAlchemy   
-   *
+   * flask-login - Example on Flask-Login usage
